@@ -92,3 +92,10 @@ async def update_book(book_id: UUID, book: Book):
             return book
     return None
 
+
+@app.delete("/{book_id}")
+async def delete_book(book_id: UUID):
+    for i, book in enumerate(BOOKS):
+        if str(book.id) == str(book_id):
+            del BOOKS[i]
+    return BOOKS
