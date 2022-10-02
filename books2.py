@@ -28,14 +28,40 @@ class Book(BaseModel):
         }
 
 
-BOOKS: list[Book] = []
+BOOKS = [
+    Book(
+        id="1ecaba70-96dd-40e9-93e8-588cee581881",
+        title="Title 1",
+        author="Author 1",
+        description="Description 1",
+        rating=60,
+    ),
+    Book(
+        id="86367e05-58ae-4766-88ae-c8601c7ed0d6",
+        title="Title 2",
+        author="Author 2",
+        description="Description 2",
+        rating=60,
+    ),
+    Book(
+        id="62b02aec-465d-41a4-9af8-df64a4fd65aa",
+        title="Title 3",
+        author="Author 3",
+        description="Description 3",
+        rating=60,
+    ),
+    Book(
+        id="dc29817a-dd49-4381-95c6-dbb99d608c8f",
+        title="Title 4",
+        author="Author 4",
+        description="Description 4",
+        rating=60,
+    ),
+]
 
 
 @app.get("/")
 async def read_all_books(books_to_return: Optional[int] = None):
-    if len(BOOKS) < 1:
-        create_books_no_api()
-    
     if books_to_return and 0 < books_to_return < len(BOOKS):
         return BOOKS[:books_to_return]
 
@@ -50,9 +76,6 @@ async def create_book(book: Book):
 
 @app.get("/book/{book_id}")
 async def read_book(book_id: UUID):
-    if len(BOOKS) < 1:
-        create_books_no_api()
-
     for book in BOOKS:
         if str(book.id) == str(book_id):
             return book
@@ -60,36 +83,12 @@ async def read_book(book_id: UUID):
     return None
 
 
-def create_books_no_api():
-    book_1 = Book(
-        id="1ecaba70-96dd-40e9-93e8-588cee581881",
-        title="Title 1",
-        author="Author 1",
-        description="Description 1",
-        rating=60,
-    )
-    book_2 = Book(
-        id="86367e05-58ae-4766-88ae-c8601c7ed0d6",
-        title="Title 2",
-        author="Author 2",
-        description="Description 2",
-        rating=60,
-    )
-    book_3 = Book(
-        id="62b02aec-465d-41a4-9af8-df64a4fd65aa",
-        title="Title 3",
-        author="Author 3",
-        description="Description 3",
-        rating=60,
-    )
-    book_4 = Book(
-        id="dc29817a-dd49-4381-95c6-dbb99d608c8f",
-        title="Title 4",
-        author="Author 4",
-        description="Description 4",
-        rating=60,
-    )
-    BOOKS.append(book_1)
-    BOOKS.append(book_2)
-    BOOKS.append(book_3)
-    BOOKS.append(book_4)
+@app.put("/{book_id}")
+async def update_book(book_id: UUID, book: Book):
+    counter = 0
+    for i, _book in enumerate(BOOKS):
+        if str(_book.id) == str(book_id):
+            BOOKS[i] = book
+            return book
+    return None
+
