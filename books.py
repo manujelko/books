@@ -1,6 +1,6 @@
-from fastapi import FastAPI
-from enum import Enum
 from typing import Optional
+
+from fastapi import FastAPI
 
 app = FastAPI()
 
