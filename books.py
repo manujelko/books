@@ -50,3 +50,14 @@ async def update_book(book_name: str, book_title: str, book_author: str):
 async def delete_book(book_name: str):
     del BOOKS[book_name]
     return f"Book_{book_name} deleted."
+
+
+@app.get("/assignment/")
+async def read_book_assignment(book_name: str):
+    return BOOKS[book_name]
+
+
+@app.delete("/assignment/")
+async def delete_book_assignment(book_name: str):
+    del BOOKS[book_name]
+    return BOOKS
