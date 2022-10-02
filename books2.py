@@ -32,9 +32,13 @@ BOOKS = []
 
 
 @app.get("/")
-async def read_all_books():
+async def read_all_books(books_to_return: Optional[int] = None):
     if len(BOOKS) < 1:
         create_books_no_api()
+    
+    if books_to_return and 0 < books_to_return < len(BOOKS):
+        return BOOKS[:books_to_return]
+
     return BOOKS
 
 
