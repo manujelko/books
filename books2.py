@@ -19,7 +19,7 @@ class Book(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "id": "dbdcf240c7c4430ca8112f33989c1681",
+                "id": "da9aa5f3-acf6-4528-8ef2-ac7e07b10e8d",
                 "title": "Computer Science Pro",
                 "author": "Codingwithroby",
                 "description": "A very nice description of a book",
@@ -28,7 +28,7 @@ class Book(BaseModel):
         }
 
 
-BOOKS = []
+BOOKS: list[Book] = []
 
 
 @app.get("/")
@@ -48,30 +48,42 @@ async def create_book(book: Book):
     return book
 
 
+@app.get("/book/{book_id}")
+async def read_book(book_id: UUID):
+    if len(BOOKS) < 1:
+        create_books_no_api()
+
+    for book in BOOKS:
+        if str(book.id) == str(book_id):
+            return book
+
+    return None
+
+
 def create_books_no_api():
     book_1 = Book(
-        id="f0c99f887817423c82fda84aa5ec784b",
+        id="1ecaba70-96dd-40e9-93e8-588cee581881",
         title="Title 1",
         author="Author 1",
         description="Description 1",
         rating=60,
     )
     book_2 = Book(
-        id="a773632ca4754793bff5af943e5bb2fc",
+        id="86367e05-58ae-4766-88ae-c8601c7ed0d6",
         title="Title 2",
         author="Author 2",
         description="Description 2",
         rating=60,
     )
     book_3 = Book(
-        id="1525a9d574ee4db0b81935b6dc4d8ff1",
+        id="62b02aec-465d-41a4-9af8-df64a4fd65aa",
         title="Title 3",
         author="Author 3",
         description="Description 3",
         rating=60,
     )
     book_4 = Book(
-        id="20b7ac1df44645f2b86611af2a4cf6d7",
+        id="dc29817a-dd49-4381-95c6-dbb99d608c8f",
         title="Title 4",
         author="Author 4",
         description="Description 4",
