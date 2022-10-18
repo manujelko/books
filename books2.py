@@ -1,7 +1,7 @@
 from typing import Optional
 from uuid import UUID
 
-from fastapi import FastAPI, HTTPException, Request, status, Form
+from fastapi import FastAPI, HTTPException, Request, status, Form, Header
 from pydantic import BaseModel, Field
 from starlette.responses import JSONResponse
 
@@ -88,6 +88,11 @@ async def negative_number_exception_handler(
     )
 
 
+@app.get("/header")
+async def read_header(random_header: Optional[str] = Header(None)):
+    return {"Random-Header": random_header}
+
+
 @app.get("/")
 async def read_all_books(books_to_return: Optional[int] = None):
     if books_to_return and books_to_return < 0:
@@ -105,9 +110,11 @@ async def create_book(book: Book):
     return book
 
 
-@app.post("/books/login")
-async def books_login(username: str = Form(), password: str = Form()):
-    return {"username": username, "password": password}
+@app.post("/books/login/")
+async def books_login(book_id: int, username: Optional[str] = Header(None), password: Optional[str] = Header(None)):
+    if username == "FastAPIUser" and password == "test1234!":
+        return BOOKS[book_id]
+    return "Invalid user"
 
 
 @app.get("/book/{book_id}")
