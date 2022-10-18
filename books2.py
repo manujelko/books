@@ -35,6 +35,15 @@ class Book(BaseModel):
         }
 
 
+class BookNoRating(BaseModel):
+    id: UUID
+    title: str = Field(min_length=1)
+    author: str
+    description: Optional[str] = Field(
+        None, title="description of the Book", max_length=100, min_length=1
+    )
+
+
 BOOKS = [
     Book(
         id="1ecaba70-96dd-40e9-93e8-588cee581881",
@@ -98,6 +107,19 @@ async def create_book(book: Book):
 
 @app.get("/book/{book_id}")
 async def read_book(book_id: UUID):
+    for book in BOOKS:
+        if str(book.id) == str(book_id):
+            return book
+
+    raise HTTPException(
+        status_code=404,
+        detail="Book not found",
+        headers={"X-Header-Error": "Nothing to be seen"},
+    )
+
+
+@app.get("/book/rating/{book_id}", response_model=BookNoRating)
+async def read_book_no_rating(book_id: UUID):
     for book in BOOKS:
         if str(book.id) == str(book_id):
             return book
