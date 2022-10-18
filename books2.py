@@ -1,8 +1,15 @@
 from typing import Optional
 from uuid import UUID
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
+from starlette.responses import JSONResponse
+
+
+class NegativeNumberException(Exception):
+    def __init__(self, books_to_return):
+        self.books_to_return = books_to_return
+
 
 app = FastAPI()
 
@@ -60,8 +67,23 @@ BOOKS = [
 ]
 
 
+@app.exception_handler(NegativeNumberException)
+async def negative_number_exception_handler(
+    request: Request, exception: NegativeNumberException
+):
+    return JSONResponse(
+        status_code=418,
+        content={
+            "message": f"Hey, wahy do you want {exception.books_to_return}? You need to read more"
+        },
+    )
+
+
 @app.get("/")
 async def read_all_books(books_to_return: Optional[int] = None):
+    if books_to_return and books_to_return < 0:
+        raise NegativeNumberException(books_to_return=books_to_return)
+
     if books_to_return and 0 < books_to_return < len(BOOKS):
         return BOOKS[:books_to_return]
 
