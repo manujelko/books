@@ -1,7 +1,7 @@
 from typing import Optional
 from uuid import UUID
 
-from fastapi import FastAPI, HTTPException, Request, status
+from fastapi import FastAPI, HTTPException, Request, status, Form
 from pydantic import BaseModel, Field
 from starlette.responses import JSONResponse
 
@@ -78,7 +78,7 @@ BOOKS = [
 
 @app.exception_handler(NegativeNumberException)
 async def negative_number_exception_handler(
-    request: Request, exception: NegativeNumberException
+        request: Request, exception: NegativeNumberException
 ):
     return JSONResponse(
         status_code=418,
@@ -103,6 +103,11 @@ async def read_all_books(books_to_return: Optional[int] = None):
 async def create_book(book: Book):
     BOOKS.append(book)
     return book
+
+
+@app.post("/books/login")
+async def books_login(username: str = Form(), password: str = Form()):
+    return {"username": username, "password": password}
 
 
 @app.get("/book/{book_id}")
